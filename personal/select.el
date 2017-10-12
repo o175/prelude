@@ -1,9 +1,9 @@
 (defun sl/select-current-indent  ()
   (when (and
          (not (sl/current-line-empty-p))
-         (= 0 (current-indentation)))
+         (= 0 (sl/get-indent)))
     (throw 'mark-all -1))
-  (setq sl/start-indent (current-indentation))
+  (setq sl/start-indent (sl/get-indent))
   (push-mark (point) t t)
   (sl/moving sl/start-indent -1)
   (forward-line)
@@ -12,24 +12,66 @@
   (forward-line -1)
   (end-of-line))
 
+(defun sl/get-indent()
+  (if (sl/current-line-empty-p)
+     9000
+    (current-indentation)
+      )
+  )
+
 (defun sl/select-previous-indent (beg)
   (goto-char beg)
-     (when (and
-            (not (sl/current-line-empty-p))
-            (= 0 (current-indentation)))
+  (when (and
+         (not (sl/current-line-empty-p))
+            (= 0 (sl/get-indent)))
        (throw 'mark-all -1))
-     (setq sl/start-indent (current-indentation))
+     (setq sl/start-indent (sl/get-indent))
      (sl/moving sl/start-indent -1)
      (push-mark (point) t t)
-     (setq sl/top-indent (current-indentation))
+     (setq sl/top-indent (sl/get-indent))
      (forward-line)
-     (setq sl/start-indent (current-indentation))
+     (setq sl/start-indent (sl/get-indent))
      (sl/moving (+ sl/top-indent 1) 1)
-     (when (< (current-indentation) sl/top-indent)
+     (when (< (sl/get-indent) sl/top-indent)
        (forward-line -1))
      )
+
+( defun sl/select-previous-indent (beg)
+  (let* ((l (sl/find-indent-change
+             (save-excursion
+               (min
+                (sl/get-indent)
+                (progn (goto-char (mark))
+                       (sl/get-indent))
+                )
+               )))
+         (top (car l))
+         (bottom (cadr l))
+         (top-indent (car top))
+         (bottom-indent (car bottom))
+         )
+    (list bottom top)
+    (goto-char (nth 1 top))
+    (when (< top-indent bottom-indent) (forward-line))
+    (beginning-of-line)
+    (push-mark (point) t t)
+    (goto-char (nth 1 bottom))
+    (when (> top-indent bottom-indent) (forward-line -1))
+    (end-of-line)
+    ))
+
+(defun sl/find-indent-change (indent)
+  (list
+   (save-excursion
+       (sl/moving indent -1)
+       (list (sl/get-indent) (point)))
+   (save-excursion
+       (sl/moving indent 1)
+       (list (sl/get-indent) (point)))
+     ))
+
 (defun sl/moving (indent forward)
-  (while (and (or (>= (current-indentation) indent)
+  (while (and (or (>= (sl/get-indent) indent)
                   (sl/current-line-empty-p))
               (= (forward-line forward) 0)
               ))
@@ -53,4 +95,5 @@
         (sl/select-previous-indent beg)
       (sl/select-current-indent))))
     (mark-whole-buffer)
+    (activate-mark)
     ))
