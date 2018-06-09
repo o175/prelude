@@ -3,35 +3,51 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        backward-sexp
+        c-electric-delete-forward
         crux-kill-whole-line
         crux-move-beginning-of-line
         easy-kill
+        electric-newline-and-maybe-indent
         emmet-expand-line
         helm-M-x
+        helm-show-kill-ring
         indent-for-tab-command
         js2-line-break
         just-one-space-new
         kill-region
         kill-sexp
+        kill-visual-line
         kmacro-start-macro-or-insert-counter
         newline-without-break-of-line
+        org-beginning-of-line
+        org-delete-char
         org-self-insert-command
         rjsx-delete-creates-full-tag
+        rjsx-electric-gt
+        save-some-buffers
         sl/expand-indent-selection
         sp-backward-delete-char
         sp-backward-kill-word
+        sp-backward-sexp
         sp-backward-up-sexp
         sp-delete-char
         sp-down-sexp
         sp-forward-sexp
         sp-kill-hybrid-sexp
         sp-kill-word
+        transpose-words
         typescript-insert-and-indent
+        undefined
+        undo-tree-visualize
         web-mode-fold-or-unfold
+        zop-up-to-char
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        comment-or-uncomment-region
+        crux-smart-open-line
         goto-line
         helm-mini
         helm-projectile-ag
@@ -40,4 +56,6 @@
         mouse-set-region
         mouse-yank-primary
         sp-splice-sexp
+        toggle-input-method
+        vimish-fold-toggle
         ))
